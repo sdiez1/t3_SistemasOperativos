@@ -14,66 +14,46 @@ typedef struct czFILES {
     void (*cz_ls)(struct czFILES *, char *);
 } czFILE;
 
-
+// https://www.linuxquestions.org/questions/programming-9/c-howto-read-binary-file-into-buffer-172985/
 void cz_open(char* simdisk, char* mode){
 	mode = mode;
 	simdisk = simdisk;
 	FILE *fp;
-    size_t size;
-    unsigned char buffer[1024];
-    fp = fopen(simdisk, mode);    
-    if (fp == NULL){
-        printf("Error: There was an Error reading the file %s \n", simdisk);           
-        exit(1);
+    char *buffer;
+    unsigned long fileLen;
+    fp = fopen(simdisk, mode);
+    if (!fp){
+        fprintf(stderr, "Unable to open file %s", simdisk);
+        return;
     }
-    else if (fread(buffer, sizeof(buffer), 1, fp) != size){
-        printf("Error: There was an Error reading the file %s -321\n", simdisk);
-        exit(1);
+
+    fseek(fp, 0, SEEK_END);
+    fileLen=ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    buffer = (char *)malloc(fileLen+1);
+    if (!buffer){
+        fprintf(stderr, "Memory error!");
+        fclose(fp);
+        return;
     }
-    else
-    {
-    	int i;
-        for(i = 0; i < size; i++){       
-        	printf("%02x", buffer[i]);
+
+    //Read file contents into buffer
+    fread(buffer, fileLen, 1, fp);
+    for (int c=0; c < fileLen; c++){
+        printf("%.2X ", (unsigned char)buffer[c]);
+
+        // put an extra space between every 4 bytes
+        if (c % 4 == 3){
+        printf(" ");
+        }
+
+        // Display 16 bytes per line
+        if (c % 16 == 15){
+        printf("\n");
     	}
     }
     fclose(fp);
 	free(buffer);
 }
 
-
-
-
-/*
-	if (mode == "r"){
-		// buscar filename en directorio
-		if (filename){
-			// retorna czFILE* que lo represente
-		}
-		else{
-			return NULL;
-		}
-	}
-	if (mode == "w"){
-		// buscar filename en directorio
-		if (filename){
-			return NULL;
-		}
-		else{
-			// create filename
-			// retornar nuevo czFILE*
-		}
-	}
-}
-
-FILE *write_ptr;
-
-write_ptr = fopen("test.bin","wb");  // w for write, b for binary
-
-fwrite(buffer,sizeof(buffer),1,write_ptr); // write 10 bytes from our buffer
-
-
-int cz_exists(char* filename){
-	filename
-}
-*/
