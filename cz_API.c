@@ -43,6 +43,7 @@ void cz_open(char* simdisk, char* mode){
 
 
 
+
 /*
 	if (mode == "r"){
 		// buscar filename en directorio
