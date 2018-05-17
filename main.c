@@ -8,7 +8,8 @@ int main(int argc, char** argv)
     char simdisk[50];
     char mode[50];
     strcpy(simdisk,argv[1]);
-    strcpy(mode, "rb");
-    cz_open(simdisk, mode);
+    strcpy(mode, "r");
+    cz_main(simdisk);
+    cz_open("filename.txt", "r");
 }
 
