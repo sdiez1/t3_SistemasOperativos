@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "cz_API.h"
  
 typedef struct czFILES {
@@ -14,8 +15,14 @@ typedef struct czFILES {
     void (*cz_ls)(struct czFILES *, char *);
 } czFILE;
 
+typedef struct Memories {
+    char directorio[1024];
+    char bitmaping[8192];
+} Memory;
+
 // https://www.linuxquestions.org/questions/programming-9/c-howto-read-binary-file-into-buffer-172985/
 void cz_open(char* simdisk, char* mode){
+	Memory memory;
 	mode = mode;
 	simdisk = simdisk;
 	FILE *fp;
@@ -38,22 +45,32 @@ void cz_open(char* simdisk, char* mode){
         return;
     }
 
-    //Read file contents into buffer
     fread(buffer, fileLen, 1, fp);
-    for (int c=0; c < fileLen; c++){
-        printf("%.2X ", (unsigned char)buffer[c]);
 
-        // put an extra space between every 4 bytes
-        if (c % 4 == 3){
-        printf(" ");
-        }
-
-        // Display 16 bytes per line
-        if (c % 16 == 15){
-        printf("\n");
-    	}
+	for (int c=0; c < 1023; c++){
+    	memcpy(&memory.directorio[c], &buffer[c], sizeof(buffer[c]));
     }
+    for (int c=1024; c < 9215; c++){
+    	memcpy(&memory.bitmaping[c-1024], &buffer[c], sizeof(buffer[c]));
+    }    
     fclose(fp);
 	free(buffer);
 }
 
+
+
+
+
+
+    //if (a=1){
+	//    for (int c=0; c < 1024; c++){
+	//        strcpy(memory.directorio[c], buffer[c]);
+	        //("%.2X ", (unsigned char)buffer[c]);
+
+	        //if (c % 4 == 3){
+	        //printf(" ");
+	        //}
+	        //if (c % 16 == 15){
+	        //printf("\n");
+	//    }
+	//}
